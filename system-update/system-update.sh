@@ -15,7 +15,7 @@ wifi2='gal'
 wifi3='Innopolis'
 charging='Charging'
 full='Full'
-minChargePercent='101'
+minChargePercent='50'
 
 logPath='/home/gal20040/apps/system-update/log.txt'
 #todo как писать лог, используя переменную logPath?
