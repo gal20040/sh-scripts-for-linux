@@ -14,6 +14,7 @@ wifi1='KAMA'
 wifi2='gal'
 wifi3='Innopolis'
 charging='Charging'
+full='Full'
 
 logPath='/home/gal20040/apps/system-update/log.txt'
 #todo как писать лог, используя переменную logPath?
@@ -29,7 +30,7 @@ if [ "$myssid" = "$wifi1" ] || [ "$myssid" = "$wifi2" ] || [ "$myssid" = "$wifi3
   mess='Connected to wifi: '
   echo $mess$myssid >> /home/gal20040/apps/system-update/log.txt
 
-  if [ "$batteryPercent" -gt "50" ] && [ "$chargeStatus" = "$charging" ]; then
+  if [ "$batteryPercent" -gt "50" ] && [ "$chargeStatus" = "$charging" ] && [ "$chargeStatus" = "$full" ]; then
     echo 'System updating start' >> /home/gal20040/apps/system-update/log.txt
 
     sudo apt update -y
