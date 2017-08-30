@@ -1,3 +1,5 @@
+#todo: есть вероятность, что во время обновления системы я выключу комп. Что произойдёт с обновлением? Надо подумать, как избежать проблем.
+
 #выполнить в консоли:
 #$ touch /home/gal20040/apps/system-update/system-update.sh
 #$ sudo chmod +x /home/gal20040/apps/system-update/system-update.sh
