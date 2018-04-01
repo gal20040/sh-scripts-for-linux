@@ -25,7 +25,7 @@ logPath='/home/gal20040/apps/system-update/log.txt'
 echo '' >> /home/gal20040/apps/system-update/log.txt
 myssid=$(sudo iwgetid -r)
 
-if [ "$myssid" = "$wifi1" ] || [ "$myssid" = "$wifi2" ] || [ "$myssid" = "$wifi3" ]; then
+if [ "$myssid" = "$wifi1" ] || [ "$myssid" = "$wifi2" ]; then
     batteryPercent=$(acpi | awk '{print $4}' | sed "s/,//" | sed "s/%//")
     chargeStatus=$(acpi | awk '{print $3}' | sed "s/,//")
 
