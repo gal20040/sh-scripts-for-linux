@@ -15,7 +15,6 @@
 
 wifi1='KAMA'
 wifi2='gal'
-wifi3='Innopolis'
 charging='Charging'
 full='Full'
 minChargePercent='50'
