@@ -1,9 +1,16 @@
+#logPath='/home/gal20040/apps/system-update/log.txt'
+#todo как писать лог, используя переменную logPath?
+
 #todo: есть вероятность, что во время обновления системы я выключу комп. Что произойдёт с обновлением? Надо подумать, как избежать проблем.
 #todo: даже если комп подключён к указанным сетям (см. wifi1-3), то не факт, что есть доступ в инет (инет может быть не оплачен) - надо сделать проверку по команде ping
 
 #выполнить в консоли:
+#$ touch /home/gal20040/apps/system-update/log.txt
 #$ touch /home/gal20040/apps/system-update/system-update.sh
 #$ sudo chmod +x /home/gal20040/apps/system-update/system-update.sh
+
+#Dependencies:
+#$ sudo apt install acpi
 
 #$ sudo crontab -e
 #обновляем систему
@@ -18,26 +25,34 @@ wifi2='gal'
 charging='Charging'
 full='Full'
 minChargePercent='50'
+seemsPCHasNoBattery='No support for device type: power_supply'
 
-logPath='/home/gal20040/apps/system-update/log.txt'
-#todo как писать лог, используя переменную logPath?
+myssid=$(sudo iwgetid -r)
+mess='Connected to wifi: '
 
 echo '' >> /home/gal20040/apps/system-update/log.txt
-myssid=$(sudo iwgetid -r)
+date >> /home/gal20040/apps/system-update/log.txt
+echo $mess$myssid >> /home/gal20040/apps/system-update/log.txt
 
 if [ "$myssid" = "$wifi1" ] || [ "$myssid" = "$wifi2" ]; then
-    batteryPercent=$(acpi | awk '{print $4}' | sed "s/,//" | sed "s/%//")
-    chargeStatus=$(acpi | awk '{print $3}' | sed "s/,//")
 
-    date >> /home/gal20040/apps/system-update/log.txt
-    mess='Connected to wifi: '
-    echo $mess$myssid >> /home/gal20040/apps/system-update/log.txt
+	#todo результат acpi не присваивается acpiResult, а выводится на экран.
+	#переменная acpiResult - остаётся пустой.
+    acpiResult=$(acpi)
+    if [ "$acpiResult" = "$seemsPCHasNoBattery" ]; then
+		#todo эта часть не работает, потому что в acpiResult пусто.
+        batteryPercent='-1'
+        chargeStatus=$(seemsPCHasNoBattery)
+    else
+        batteryPercent=$(acpi | awk '{print $4}' | sed "s/,//" | sed "s/%//")
+        chargeStatus=$(acpi | awk '{print $3}' | sed "s/,//")
+    fi
 
     messChPercent='Battery charge: '
     messChStatus='% Charge status: '
     echo $messChPercent$batteryPercent$messChStatus$chargeStatus >> /home/gal20040/apps/system-update/log.txt
 
-    if [ "$batteryPercent" -gt "$minChargePercent" ] && ( [ "$chargeStatus" = "$charging" ] || [ "$chargeStatus" = "$full" ] ); then
+    if [ "$chargeStatus" = "$full" ] || [ "$chargeStatus" = "$seemsPCHasNoBattery" ] || ([ "$chargeStatus" = "$charging" ] && [ "$batteryPercent" -gt "$minChargePercent" ]); then
         echo 'System updating start' >> /home/gal20040/apps/system-update/log.txt
 
         sudo apt update -y
@@ -62,9 +77,8 @@ if [ "$myssid" = "$wifi1" ] || [ "$myssid" = "$wifi2" ]; then
         echo $mess >> /home/gal20040/apps/system-update/log.txt
     fi
 else
-    date >> /home/gal20040/apps/system-update/log.txt
-    mess='There is no necessary connection - no update. Connected to wifi: '
-    echo $mess$myssid >> /home/gal20040/apps/system-update/log.txt
+    mess='There is no necessary connection - no update.'
+    echo $mess >> /home/gal20040/apps/system-update/log.txt
 fi
 
 exit 0
